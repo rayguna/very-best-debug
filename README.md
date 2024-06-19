@@ -25,4 +25,13 @@ Fix broken hyperlinks.
 11. Trace error in the venue_templates in the details.html.erb by looking at venue_controller. In the class, the_venue should be @the_venue. Also, for matching_venues = Venue.where({ :id => venue_id }) you must add matching_venues = Venue.where({ :id => venue_id }).first. 
 12. **Cool!** No method error at venues/6, undefined method "username". This error has to do with the comments class which needs to be set a foreign id to be linked to the users table. By setting a foreign id of venues, the venues table objects has a direct access to the comments table columns as added methods. You need to perform a join table to connect the author_id to the comment between the user and the comment tables. Replace <%= comment.commenter.username %> to <%= User.where(:id=>comment.author_id)[0].username %>. 
 13. Fix users show details link. Routing error at users/sharilyn: unitialized constant UserController. Let's first look at the routes.rb: get("/users/:username", { :controller => "user", :action => "show" }). The controller should be "users"/
-14. Next: update form values.
+14. Next: Fix "Add user" button. Routing error: no route match (POST) - insert_user_record. 
+```
+post("/insert_user_record", { :controller => "venues", :action => "create" })
+```
+
+It turns out that the method is not defined. Change <form action="/insert_user_record" method=""> to <form action="/insert_user_record" method="post">. 
+
+Subsequently, I got an error: Routing error: no route match (GET) - insert_user_record. Need to further modify the routes.rb script from   post("/insert_user_record", { :controller => "venues", :action => "create" }) to   post("/insert_user_record", { :controller => "users", :action => "create" }). 
+
+**TIPS:** If the correction looks good, but the error still shows up, just restart the server and review. This final step ususally resolves the issue.
