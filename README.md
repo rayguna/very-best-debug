@@ -123,7 +123,7 @@ Next error: undefined local variable user within the users_controller.rb. It sho
 
 Upon refreshing the page, I got the familiar error: routing error no route matches [GET] ... It is time to restart the server. 
 
-18. Next, fix "Update venue" button. I see the familiarerror: routing error no route matches [GET]. Let's look at the form route within views/venue_templates/details.html.erb.
+18. Next, fix "Update venue" button. I see the familiar error: routing error no route matches [GET]. Let's look at the form route within views/venue_templates/details.html.erb.
 
 ```
     <form action="/update_venue/<%= @the_venue.id %>">
@@ -137,4 +137,10 @@ It is missing the method parameter. Change it to:
 
 The next error is param missing. Simply type params in the debug console and identify the correct hash key.
 
-The next error is undefined method address. Use the debug console to parse through the object. I found that I had to retrieve the zeroth element for venue. Change from     venue = Venue.where({ :id => the_id }) to     venue = Venue.where({ :id => the_id })[0]. Refreshing the web page leads me to routing error [GET]. restart the server.
+The next error is undefined method address. Use the debug console to parse through the object. I found that I had to retrieve the zeroth element for venue. Change from venue = Venue.where({ :id => the_id }) to     venue = Venue.where({ :id => the_id })[0]. Refreshing the web page leads me to routing error [GET]. restart the server.
+
+19. Next, work on delete this venue link. Clicking on the button leads me to the familiar error: routing error no route matches [GET]. Look at routes.rb.
+
+```
+  get("/delete_venue/:id_to_delete", { :controller => "venue", :action => "destroy" })
+```
