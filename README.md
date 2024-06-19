@@ -34,4 +34,28 @@ It turns out that the method is not defined. Change <form action="/insert_user_r
 
 Subsequently, I got an error: Routing error: no route match (GET) - insert_user_record. Need to further modify the routes.rb script from   post("/insert_user_record", { :controller => "venues", :action => "create" }) to   post("/insert_user_record", { :controller => "users", :action => "create" }). 
 
-**TIPS:** If the correction looks good, but the error still shows up, just restart the server and review. This final step ususally resolves the issue.
+**TIPS:** If the correction looks good, but the error still shows up, just restart the server and review. This final step usually resolves the issue.
+15. Next: Fix "Add venue" button. Routing error: no route matches "/insert_venue_record". Looking at the html.erb page, I find the same issue as the "Add user" button. It is missing the "post" method. Change <form action="/insert_venue_record"> to <form action="/insert_venue_record" method="post">. Then, retsart the server to test.
+
+Next error: undefined local variable or method venue. Need to fix the VenuesController class. The variable @venue should be consistently set as venue. Next, I see the error, no route matches GET /insert_venue_record. It is time to restart the server.
+
+Next error: params missing. Use the debug rails console and query the key-value pairs for params. I found that the keys are not retrieved correctly. The keys are missing the prefixed "query". Upon refreshing the page, I got the error, no route matches GET /insert_venue_record. It is time to restart the server. 
+
+Next: Look at the venue controller to see how this varable is defined. In the controller, a venue object is created but it is set as @venue whereas the associated attributes are set as venue.attribute. Change @venue to venue. Restart server. 
+
+Next, look at the show method of the venue class to see how the parameters are passed on. This is associated with the dynamic route. I saw the route is directed to the dynamic route username, rather than to the venue id. Fix this within the redirect_to input function within the venues_controller.
+
+In the following, change .name within redirect_to("/venues/#{venue.name}") to .id.
+```
+  def create
+    venue = Venue.new
+    venue.address = params.fetch("query_address")
+    venue.name = params.fetch("query_name")
+    venue.neighborhood = params.fetch("query_neighborhood")
+    venue.save
+
+    redirect_to("/venues/#{venue.name}")
+  end
+```
+
+16. Next: Fix "Add comment" button.
