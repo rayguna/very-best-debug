@@ -144,3 +144,48 @@ The next error is undefined method address. Use the debug console to parse throu
 ```
   get("/delete_venue/:id_to_delete", { :controller => "venue", :action => "destroy" })
 ```
+
+Change to above to: 
+
+```
+  get("/delete_venue/:venue_id", { :controller => "venues", :action => "destroy" })
+```
+
+Review venue.html.erb.
+
+```
+  <a href="/delete_venue/<% @the_venue.id %>">
+```
+
+It is missing the equal sign to display the output:
+
+```
+    <a href="/delete_venue/<%=@the_venue.id %>">
+```
+
+Look at venues_controller.
+
+```
+  def destroy
+    the_id = params.fetch("venue_id")
+    matching_venues = Venue.where({ :id => the_id })
+    venue = matching_venues
+    venue.destroy
+
+    redirect_to("/venues")
+  end
+```
+
+Fix it to:
+
+```
+  def destroy
+    the_id = params.fetch("venue_id")
+    matching_venues = Venue.where({ :id => the_id })[0]
+    matching_venues.destroy
+
+    redirect_to("/venues")
+  end
+```
+
+Note that after the .where command, you have to parse yor output for the first element.
