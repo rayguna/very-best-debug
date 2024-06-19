@@ -59,3 +59,54 @@ In the following, change .name within redirect_to("/venues/#{venue.name}") to .i
 ```
 
 16. Next: Fix "Add comment" button.
+
+Got the familiar GET routing error. It is missing the method="post" in the form action. Fix it to look like: <form action="/insert_comment_record" method="post"> and restart the server. 
+
+Next, look at routes.rb for "/insert_comment_record" to see the class and the method it corresponds to.
+
+```
+  post("/insert_comment_record", { :controller => "comments", :action => "create" })
+```
+The added comment does not show up. So, let's look at the dynamic route setup: venues/:an_id. 
+
+```
+get("/venues/:an_id", { :controller => "venues", :action => "show" }) 
+```
+
+The issue is that the comment is not being added. It may have been due to an exception. I used a debugger breakpoint to debug. Continue breakpoint with pressing space. Exit to the end by typing c. This is what I see:
+
+```
+(rdbg) comment
+#<Comment:0x00007a8b3c6c5128
+ id: nil,
+ author_id: 90,
+ body: "Walk before you run.",
+ venue_id: 32,
+ created_at: nil,
+ updated_at: nil>
+```
+
+For some reasons, the id is not incremented automatically, nor do the created_at and updated_at. I suspect that the data is not saved because of some exceptions. Upon reviewing the models folder, I see that the comment.rb class has a line on validates with :commented as the attribute.
+
+```
+  validates(:commenter, { :presence => true })
+```
+
+However, :commenter is none of the table attributes not the form attributes.
+
+```
+# Table name: comments
+#
+#  id         :integer          not null, primary key
+#  body       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  author_id  :integer
+#  venue_id   :integer
+```
+
+In this case, I change :commenter to :author_id and it fixed the issue. Also, commenting the validates line fixed the issue. However, we do need this validates line to make sure that the comment is linked to the user via author_id.
+
+```
+  validates(:author_id, { :presence => true })
+```
