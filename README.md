@@ -110,3 +110,15 @@ In this case, I change :commenter to :author_id and it fixed the issue. Also, co
 ```
   validates(:author_id, { :presence => true })
 ```
+
+17. Next, work on username update button.
+
+I got the familiar error, no route matches post update_user/121. Let's look at routes.rb. I find that it is a spelling error, the post route linked to the form should be called update_users. You also need to restart the server.
+
+Next error: undefined local variable user within the users_controller.rb. It should be the_user.
+
+```
+    redirect_to("/users/#{the_user.username}")
+```
+
+Upon refreshing the page, I got the familiar error: routing error no route matches [GET] ... It is time to restart the server. 
